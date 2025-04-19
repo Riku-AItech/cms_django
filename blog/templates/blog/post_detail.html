@@ -7,6 +7,12 @@
 <body>
     <h1>{{ post.title }}</h1>
     <p>{{ post.content }}</p>
+
+    <!-- ✅ 画像表示 -->
+    {% if post.image %}
+    <img src="{{ post.image.url }}" alt="画像" style="max-width: 500px;">
+    {% endif %}
+    
     <p>
         <a href="{% url 'post_edit' post.pk %}">編集</a> |
         <a href="{% url 'post_delete' post.pk %}">削除</a>

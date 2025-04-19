@@ -18,7 +18,7 @@ from django.shortcuts import redirect
 
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('post_list')  # 投稿後、一覧に戻る
@@ -32,7 +32,7 @@ from .forms import PostForm
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('post_detail', pk=post.pk)
@@ -49,7 +49,7 @@ def post_delete(request, pk):
 
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)  # 一旦保存せずにインスタンスだけ取得
             post.author = request.user      # ログイン中のユーザーを設定！

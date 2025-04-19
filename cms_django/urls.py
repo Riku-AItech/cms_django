@@ -18,10 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include  # ← include を追加！
 from django.shortcuts import redirect  # ← 追加
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', lambda request: redirect('post_list')),  # ← トップを投稿一覧にリダイレクト
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),  # ← これで blog/urls.py を読み込む！
-]
 
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
