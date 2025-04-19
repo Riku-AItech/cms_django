@@ -29,6 +29,7 @@
             <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
             <p>{{ post.content }}</p>
             <small>投稿日: {{ post.created_at }}</small>
+            <p><small>投稿者: {{ post.author.username }}</small></p>
         </div>
     {% empty %}
         <p>まだ投稿がありません。</p>

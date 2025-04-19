@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>削除確認</title>
+</head>
+<body>
+    <h1>この投稿を削除してもよろしいですか？</h1>
+    <p><strong>{{ post.title }}</strong></p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">削除する</button>
+        <a href="{% url 'post_detail' post.pk %}">キャンセル</a>
+    </form>
+</body>
+</html>

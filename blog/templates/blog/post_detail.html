@@ -7,6 +7,11 @@
 <body>
     <h1>{{ post.title }}</h1>
     <p>{{ post.content }}</p>
+    <p>
+        <a href="{% url 'post_edit' post.pk %}">編集</a> |
+        <a href="{% url 'post_delete' post.pk %}">削除</a>
+    </p>
+    
     <p><small>投稿日: {{ post.created_at }}</small></p>
     <a href="/posts/">← 一覧に戻る</a>
 </body>
