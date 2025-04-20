@@ -55,7 +55,7 @@ ROOT_URLCONF = "cms_django.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -115,7 +115,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+# settings.py
+
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# URL の先頭に付くパス
+STATIC_URL = '/static/'
+
+# 開発サーバー（runserver）や collectstatic 時に
+# 「staticファイルをどこから集めるか」を指示する
+STATICFILES_DIRS = [
+    BASE_DIR / "cms_django" / "static",
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -126,3 +139,7 @@ import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGIN_REDIRECT_URL = '/posts/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL = '/accounts/login/'
+

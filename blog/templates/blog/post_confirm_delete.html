@@ -1,16 +1,25 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>削除確認</title>
-</head>
-<body>
-    <h1>この投稿を削除してもよろしいですか？</h1>
-    <p><strong>{{ post.title }}</strong></p>
-    <form method="post">
+{% extends "base.html" %}
+
+{% block title %}削除確認{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+    <h1 class="text-2xl font-bold text-red-600 mb-4">この投稿を削除してもよろしいですか？</h1>
+    
+    <div class="p-4 border border-gray-200 rounded mb-6 bg-gray-50">
+        <p class="font-medium text-lg">「{{ post.title }}」</p>
+    </div>
+    
+    <form method="post" class="mt-6">
         {% csrf_token %}
-        <button type="submit">削除する</button>
-        <a href="{% url 'post_detail' post.pk %}">キャンセル</a>
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md">
+                削除する
+            </button>
+            <a href="{% url 'post_detail' post.pk %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md">
+                キャンセル
+            </a>
+        </div>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

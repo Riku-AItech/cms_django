@@ -20,12 +20,17 @@ from django.urls import path, include  # ← include を追加！
 from django.shortcuts import redirect  # ← 追加
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from blog.views import signup_view  # ← サインアップビューをインポート
+
 
 urlpatterns = [
     path('', lambda request: redirect('post_list')),  # ← トップを投稿一覧にリダイレクト
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),  # ← これで blog/urls.py を読み込む！
-
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # ✅ ログイン
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='post_list'), name='logout'),  # ✅ ログアウト
+    path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

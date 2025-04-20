@@ -1,38 +1,35 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>投稿一覧</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
-        }
-        .post {
-            background-color: #fff;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <h1>投稿一覧</h1>
+{% extends "base.html" %}
 
-    {% for post in posts %}
-        <div class="post">
-            <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-            <p>{{ post.content }}</p>
-            <small>投稿日: {{ post.created_at }}</small>
-            <p><small>投稿者: {{ post.author.username }}</small></p>
-        </div>
-    {% empty %}
-        <p>まだ投稿がありません。</p>
-    {% endfor %}
-</body>
-</html>
+{% block title %}投稿一覧{% endblock %}
+
+{% block content %}
+<h2 class="text-xl font-semibold text-gray-800 mb-4">投稿一覧</h2>
+
+{% if posts %}
+  {% for post in posts %}
+    <div class="bg-white shadow-sm rounded-lg p-4 mb-4 border-l-4 border-blue-500 hover:shadow-md transition">
+      <h3 class="text-lg font-bold text-blue-700">{{ post.title }}</h3>
+      <p class="text-gray-600 mb-2">{{ post.content }}</p>
+      <p class="text-sm text-gray-400">投稿日: {{ post.created_at|date:"Y年n月j日 H:i" }}</p>
+      <p class="text-sm text-gray-400">投稿者: {{ post.author.username }}</p>
+      <div class="mt-2 space-x-4 text-sm">
+        <a href="{% url 'post_detail' post.pk %}" class="text-blue-500 hover:underline">詳細を見る</a>
+        <a href="{% url 'post_edit' post.pk %}" class="text-green-500 hover:underline">編集</a>
+        <a href="{% url 'post_delete' post.pk %}" class="text-red-500 hover:underline">削除</a>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-gray-500">まだ投稿はありません。</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <div class="mt-8">
+    <a href="{% url 'post_create' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+      新しい投稿を作成
+    </a>
+  </div>
+{% else %}
+<p class="mt-4 text-gray-600"><a href="{% url 'login' %}" class="text-blue-600 hover:underline">ログイン</a>してください。</p>
+{% endif %}
+{% endblock %}

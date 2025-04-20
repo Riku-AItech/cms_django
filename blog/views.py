@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import Post  # 投稿モデルを読み込む
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def post_list(request):
     posts = Post.objects.filter(published=True).order_by('-created_at')  # 公開済みの投稿だけ、日付の新しい順
     return render(request, 'blog/post_list.html', {'posts': posts})
@@ -16,12 +18,17 @@ def post_detail(request, pk):
 from .forms import PostForm
 from django.shortcuts import redirect
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('post_list')  # 投稿後、一覧に戻る
+            post = form.save(commit=False)
+            post.author = request.user  # ログイン中のユーザーを紐づける！
+            post.save()
+            return redirect('post_list')
     else:
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
@@ -29,6 +36,7 @@ def post_create(request):
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import PostForm
 
+@login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
@@ -40,6 +48,7 @@ def post_edit(request, pk):
         form = PostForm(instance=post)
     return render(request, 'blog/post_form.html', {'form': form})
 
+@login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
@@ -47,14 +56,18 @@ def post_delete(request, pk):
         return redirect('post_list')
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
 
-def post_create(request):
+def home_redirect(request):
+    if request.user.is_authenticated:
+        return redirect('post_list')
+    return redirect('login')
+from django.contrib.auth.forms import UserCreationForm
+
+def signup_view(request):
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)  # 一旦保存せずにインスタンスだけ取得
-            post.author = request.user      # ログイン中のユーザーを設定！
-            post.save()                     # ここで保存
-            return redirect('post_list')
+            form.save()
+            return redirect('login')  # 登録後はログイン画面へ
     else:
-        form = PostForm()
-    return render(request, 'blog/post_form.html', {'form': form})
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})

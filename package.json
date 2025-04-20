@@ -1,0 +1,19 @@
+{
+  "name": "djangocms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx tailwindcss -i cms_django/static/css/tailwind_input.css -o cms_django/static/css/tailwind.css --minify",
+    "watch:css": "npx tailwindcss -i cms_django/static/css/tailwind_input.css -o cms_django/static/css/tailwind.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.3.5"
+  }
+}
