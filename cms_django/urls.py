@@ -29,8 +29,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),  # ← これで blog/urls.py を読み込む！
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # ✅ ログイン
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='post_list'), name='logout'),  # ✅ ログアウト
+    path('accounts/logout/', auth_views.LogoutView.as_view(
+        next_page='login',
+        http_method_names=['post', 'get']
+    ), name='logout'),  # ログイン画面に遷移するよう修正
     path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
+    path('accounts/', include('django.contrib.auth.urls')),  # ← これ追加！
+    path('posts/', include('blog.urls')),  # ← Rikuのblogアプリ
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

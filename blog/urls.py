@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
     path('posts/', views.post_list, name='post_list'),  # URL「/posts/」にアクセスしたらpost_list関数を実行

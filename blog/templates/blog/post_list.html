@@ -1,35 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}投稿一覧{% endblock %}
+{% block title %}投稿一覧 | BlueCMS{% endblock %}
 
 {% block content %}
-<h2 class="text-xl font-semibold text-gray-800 mb-4">投稿一覧</h2>
-
-{% if posts %}
-  {% for post in posts %}
-    <div class="bg-white shadow-sm rounded-lg p-4 mb-4 border-l-4 border-blue-500 hover:shadow-md transition">
-      <h3 class="text-lg font-bold text-blue-700">{{ post.title }}</h3>
-      <p class="text-gray-600 mb-2">{{ post.content }}</p>
-      <p class="text-sm text-gray-400">投稿日: {{ post.created_at|date:"Y年n月j日 H:i" }}</p>
-      <p class="text-sm text-gray-400">投稿者: {{ post.author.username }}</p>
-      <div class="mt-2 space-x-4 text-sm">
-        <a href="{% url 'post_detail' post.pk %}" class="text-blue-500 hover:underline">詳細を見る</a>
-        <a href="{% url 'post_edit' post.pk %}" class="text-green-500 hover:underline">編集</a>
-        <a href="{% url 'post_delete' post.pk %}" class="text-red-500 hover:underline">削除</a>
-      </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <p class="text-gray-500">まだ投稿はありません。</p>
-{% endif %}
-
-{% if user.is_authenticated %}
-  <div class="mt-8">
-    <a href="{% url 'post_create' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
-      新しい投稿を作成
+<section class="max-w-7xl mx-auto py-12 px-6">
+  <!-- ヘッダー -->
+  <div class="flex justify-between items-center mb-10">
+    <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">投稿一覧</h1>
+    <a href="{% url 'post_create' %}" class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      新規投稿
     </a>
   </div>
-{% else %}
-<p class="mt-4 text-gray-600"><a href="{% url 'login' %}" class="text-blue-600 hover:underline">ログイン</a>してください。</p>
-{% endif %}
-{% endblock %}
+
+  {% if posts %}
+  <!-- 横スクロール対応のカードリスト -->
+  <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+    {% for post in posts %}
+    <article class="w-80 flex-shrink-0 bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out overflow-hidden flex flex-col justify-between">
+      {% if post.image %}
+      <a href="{% url 'post_detail' post.pk %}">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-40 object-cover rounded-t-2xl">
+      </a>
+      {% endif %}
+      <div class="p-5 flex flex-col justify-between flex-grow">
+        <div class="mb-4">
+          <h2 class="text-xl font-semibold text-gray-800 leading-snug mb-1">
+            <a href="{% url 'post_detail' post.pk %}" class="hover:text-blue-600 transition">{{ post.title|truncatechars:40 }}</a>
+          </h2>
+          <p class="text-sm text-gray-600">投稿者: {{ post.author.username }}</p>
+          <p class="text-xs text-gray-400 mb-2">{{ post.created|date:"Y年m月d日 H:i" }}</p>
+          <p class="text-gray-700 text-sm leading-relaxed">{{ post.content|striptags|truncatechars:70 }}</p>
+        </div>
+        <div class="border-t pt-3 mt-auto flex justify-between items-center text-sm text-gray-600">
+          <a href="{% url 'post_detail' post.pk %}" class="text-blue-600 hover:underline">続きを読む</a>
+          <div class="flex gap-3">
+            <a href="{% url 'post_edit' post.pk %}" class="hover:text-green-600 transition">編集</a>
+            <form action="{% url 'post_delete' post.pk %}" method="post" class="inline">{% csrf_token %}
+              <button type="submit" onclick="return confirm('本当に削除しますか？')" class="hover:text-red-600 transition">削除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="text-center text-gray-600 mt-8">まだ投稿がありません。</p>
+  {% endif %}
+</section>
+{% endblock content %}

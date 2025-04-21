@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}BlueCMS{% endblock %}</title>
   <link href="{% static 'css/tailwind.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
   <style>
     .login-background {
       background-image: url('{% static "img/bg.jpg" %}');
@@ -17,41 +18,24 @@
 </head>
 
 <body class="flex flex-col min-h-screen text-gray-800
-  {% if request.path == '/accounts/login/' or request.path == '/accounts/signup/' %}
+  {% if 'login' in request.path or 'signup' in request.path %}
     login-background
   {% endif %}">
 
   <!-- ✅ ヘッダー -->
   <header class="bg-white shadow-md border-b">
     <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <!-- ロゴ＋コンセプト -->
       <div class="flex flex-col leading-tight">
         <span class="text-lg font-bold text-blue-600">BlueCMS</span>
         <span class="text-xs text-gray-500">小さく始めて、大切に育てるチームのためのCMS。</span>
-      </div>
-
-      <!-- ユーザー操作 -->
-      <div class="flex items-center space-x-4 text-sm">
-        {% if user.is_authenticated %}
-          <span class="text-gray-700">ようこそ、{{ user.username }} さん!</span>
-          <a href="{% url 'post_create' %}" class="text-blue-500 hover:underline">新規投稿</a>
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="text-blue-500 hover:underline bg-transparent border-none cursor-pointer p-0">ログアウト</button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}" class="text-blue-500 hover:underline">ログイン</a>
-        {% endif %}
       </div>
     </div>
   </header>
 
   <!-- ✅ メイン -->
-  {% block main %}
   <main class="flex-1 flex items-center justify-center px-4">
     {% block content %}{% endblock %}
   </main>
-  {% endblock %}
 
   <!-- ✅ フッター -->
   <footer class="bg-white border-t shadow-inner text-center py-4 text-sm text-gray-500">
