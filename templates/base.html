@@ -5,8 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}BlueCMS{% endblock %}</title>
-  <link href="{% static 'css/tailwind.css' %}" rel="stylesheet" />
-  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+  <!-- <link href="{% static 'css/tailwind.css' %}" rel="stylesheet" /> を下記に置き換える -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
   <style>
     .login-background {
       background-image: url('{% static "img/bg.jpg" %}');
@@ -24,16 +25,30 @@
 
   <!-- ✅ ヘッダー -->
   <header class="bg-white shadow-md border-b">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex flex-col leading-tight">
-        <span class="text-lg font-bold text-blue-600">BlueCMS</span>
-        <span class="text-xs text-gray-500">小さく始めて、大切に育てるチームのためのCMS。</span>
+    <div class="w-full px-4 py-3 flex justify-between items-center">
+      <div class="flex flex-col text-left items-start leading-tight pl-0">
+        <span class="text-2xl font-extrabold text-blue-700 tracking-tight">BlueCMS</span>
+        <span class="text-sm text-gray-500 tracking-wide">小さく始めて、大切に育てるチームのためのCMS。</span>
       </div>
+      
+      {% if user.is_authenticated %}
+      <form action="{% url 'logout' %}" method="post" class="ml-4">
+        {% csrf_token %}
+        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold rounded-full shadow-sm transition duration-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+          </svg>
+          ログアウト
+        </button>
+        
+      </form>
+      {% endif %}
     </div>
   </header>
+  
 
   <!-- ✅ メイン -->
-  <main class="flex-1 flex items-center justify-center px-4">
+  <main class="flex-1 {% if 'login' in request.path or 'signup' in request.path %}flex items-center justify-center{% endif %} px-4">
     {% block content %}{% endblock %}
   </main>
 

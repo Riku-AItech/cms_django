@@ -22,17 +22,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from blog.views import signup_view  # ← サインアップビューをインポート
-
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', lambda request: redirect('post_list')),  # ← トップを投稿一覧にリダイレクト
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),  # ← これで blog/urls.py を読み込む！
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # ✅ ログイン
-    path('accounts/logout/', auth_views.LogoutView.as_view(
-        next_page='login',
-        http_method_names=['post', 'get']
-    ), name='logout'),  # ログイン画面に遷移するよう修正
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),  # ログイン画面に遷移するよう修正
     path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
     path('accounts/', include('django.contrib.auth.urls')),  # ← これ追加！
     path('posts/', include('blog.urls')),  # ← Rikuのblogアプリ
