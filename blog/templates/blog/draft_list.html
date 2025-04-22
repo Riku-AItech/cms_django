@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="max-w-3xl mx-auto p-4">
+    <h1 class="text-2xl font-bold text-blue-700 mb-4 text-center">下書き一覧</h1>
+    <ul>
+      {% for draft in drafts %}
+        <li class="p-4 bg-blue-50 rounded-md shadow-sm flex items-center mb-4">
+          <div>
+            <strong class="text-lg text-blue-600">{{ draft.title|default:'（タイトルなし）' }}</strong>
+            <p class="text-gray-500 text-sm mt-1">— {{ draft.created|date:"Y/m/d H:i" }}</p>
+          </div>
+          <div class="ml-auto flex space-x-4">
+            <a href="{% url 'post_create' %}?from_draft={{ draft.pk }}"
+               class="text-blue-600 hover:text-blue-800 font-medium">
+              続きを書く
+            </a>
+            <a href="{% url 'post_delete' draft.pk %}"
+               class="text-red-500 hover:text-red-700 font-medium">
+              削除
+            </a>
+          </div>
+        </li>
+      {% empty %}
+        <li class="text-center text-gray-500 py-4">下書きはありません。</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

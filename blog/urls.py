@@ -16,7 +16,8 @@ urlpatterns = [
     path('', views.home_redirect, name='home'),
      # 投稿関連
     path('posts/', views.post_list, name='post_list'),
-    path('posts/new/', views.post_create, name='post_create'),
+    path('new/', views.post_create, name='post_create'),
+    path('posts/drafts/', views.draft_list, name='draft_list'),
     # …など
 
 
