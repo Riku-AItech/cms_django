@@ -8,19 +8,56 @@
 <section class="relative max-w-7xl mx-auto py-8 px-6 bg-gradient-to-br from-blue-100 via-white to-blue-50 overflow-hidden">
 
   <!-- 上部コントロールエリア -->
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">投稿一覧</h1>
-    <a href="{% url 'post_create' %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md shadow-sm transition">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-      </svg>
+  <div class="flex flex-wrap items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-2 md:mb-0">投稿一覧</h1>
+    <div class="flex flex-wrap items-center space-x-2">
+      <!-- 検索フォーム -->
+      <form method="get" class="flex items-center space-x-2">
+        <input type="text" name="q" placeholder="タイトルで検索" value="{{ q }}"
+          class="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg transition">
+          検索
+        </button>
+      </form>
+      <!-- 並び替えフォーム -->
+      <form method="get" class="flex items-center space-x-2">
+        <input type="hidden" name="q" value="{{ q }}">
+        <select name="sort" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+          <option value="" {% if not sort %}selected{% endif %}>並び替え</option>
+          <option value="created_desc" {% if sort == 'created_desc' %}selected{% endif %}>日付: 最新順</option>
+          <option value="created_asc" {% if sort == 'created_asc' %}selected{% endif %}>日付: 古い順</option>
+          <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>タイトル: 昇順</option>
+          <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>タイトル: 降順</option>
+          <option value="author_asc" {% if sort == 'author_asc' %}selected{% endif %}>投稿者: A→Z</option>
+          <option value="author_desc" {% if sort == 'author_desc' %}selected{% endif %}>投稿者: Z→A</option>
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg transition">
+          並び替え
+        </button>
+      </form>
+      <!-- カテゴリフィルター -->
+      <form method="get" class="flex items-center space-x-2">
+        <input type="hidden" name="q" value="{{ q }}">
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <select name="category" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+          <option value="">全カテゴリ</option>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == category_id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg transition">
+          絞り込み
+        </button>
+      </form>
+    </div>
+    <a href="{% url 'post_create' %}" class="ml-auto inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md shadow transition">
       新規投稿
     </a>
   </div>
 
   {% if posts %}
   <!-- グリッドレイアウト -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for post in posts %}
     <article class="post-card bg-white rounded-lg border border-gray-100 shadow hover:shadow-md transition overflow-hidden flex flex-col">
 
@@ -31,35 +68,38 @@
       {% endif %}
       <div class="p-4 flex-grow flex flex-col">
         <div class="mb-2">
-          <h2 class="text-lg font-medium text-gray-800 mb-1">
-            <a href="{% url 'post_detail' post.pk %}" class="hover:text-blue-600 transition">{{ post.title|truncatechars:40 }}</a>
+          <h2 class="text-xl font-semibold text-gray-800 mb-1">
+            <a href="{% url 'post_detail' post.pk %}" class="hover:text-blue-600 transition">{{ post.title }}</a>
           </h2>
           <div class="flex items-center gap-2 text-xs text-gray-500">
-            <span>{{ post.author.username }}</span>
+            <span><a href="{% url 'profile' post.author.username %}" class="text-blue-600 hover:underline">{{ post.author.username }}</a></span>
             <span>•</span>
             <time>{{ post.created|date:"Y年m月d日" }}</time>
           </div>
-        </div>
-        
-        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ post.content|striptags|truncatechars:80 }}</p>
-        
-        <div class="mt-auto flex justify-between items-center text-sm pt-3 border-t border-gray-100">
-          <a href="{% url 'post_detail' post.pk %}" class="text-blue-600 hover:underline">続きを読む</a>
-          <div class="flex items-center gap-3">
-            <a href="{% url 'post_edit' post.pk %}" class="text-gray-500 hover:text-blue-600" title="編集">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </a>
-            <form action="{% url 'post_delete' post.pk %}" method="post" class="inline">
-              {% csrf_token %}
-              <button type="submit" onclick="return confirm('本当に削除しますか？')" class="text-gray-500 hover:text-red-600" title="削除">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </form>
+          <div class="mt-1 text-sm text-gray-600">
+            カテゴリ:
+            {% if post.category %}
+              {{ post.category.name }}
+            {% else %}
+              未設定
+            {% endif %}
           </div>
+        </div>
+        <p class="text-gray-600 flex-grow">{{ post.content|striptags|truncatechars:100 }}</p>
+        <div class="mt-4 flex justify-end space-x-4 text-gray-500">
+          <a href="{% url 'post_edit' post.pk %}" class="hover:text-blue-600" title="編集">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            </svg>
+          </a>
+          <form action="{% url 'post_delete' post.pk %}" method="post" onsubmit="return confirm('本当に削除しますか？')">
+            {% csrf_token %}
+            <button type="submit" class="hover:text-red-600" title="削除">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </form>
         </div>
       </div>
     </article>

@@ -19,6 +19,7 @@ urlpatterns = [
     path('new/', views.post_create, name='post_create'),
     path('posts/drafts/', views.draft_list, name='draft_list'),
     # …など
-
-
+    # ユーザープロフィール
+    path('users/<str:username>/', views.profile, name='profile'),
+    path('accounts/profile/edit/', views.profile_edit, name='profile_edit'),
 ]
