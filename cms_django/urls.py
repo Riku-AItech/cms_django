@@ -32,7 +32,6 @@ urlpatterns = [
     path('accounts/logout/', LogoutView.as_view(), name='logout'),  # ログイン画面に遷移するよう修正
     path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
     path('accounts/', include('django.contrib.auth.urls')),  # ← これ追加！
-    path('posts/', include('blog.urls')),  # ← Rikuのblogアプリ
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

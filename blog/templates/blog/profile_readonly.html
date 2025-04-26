@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}プロフィール | {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-sky-100 to-white py-12 px-4">
+  <div class="max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8">
+    <div class="flex items-center space-x-6 mb-6 border-b pb-4">
+      {% if profile.profile_image %}
+        <img src="{{ profile.profile_image.url }}" alt="{{ profile_user.username }}の画像" class="w-24 h-24 rounded-full object-cover shadow-md">
+      {% else %}
+        <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center shadow-inner">
+          <span class="text-gray-500 text-2xl">👤</span>
+        </div>
+      {% endif %}
+      <div>
+        <h1 class="text-3xl font-extrabold text-blue-800">{{ profile_user.username }}</h1>
+        <p class="text-gray-600 mt-3 prose">{{ profile.bio|default:'自己紹介はまだ設定されていません。'|linebreaksbr }}</p>
+      </div>
+    </div>
+
+    {# 常に表示される「投稿一覧に戻る」ボタン #}
+    <div class="mt-4 text-right">
+      <a href="{% url 'post_list' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold rounded-lg shadow-sm transition duration-300">
+        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+        投稿一覧に戻る
+      </a>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-xl font-semibold mb-4">{{ profile_user.username }}さんの投稿一覧</h2>
+      {% if posts %}
+        <ul class="space-y-4">
+          {% for post in posts %}
+            <li class="border-b pb-2">
+              <a href="{% url 'post_detail' post.pk %}" class="text-blue-600 hover:underline font-medium">{{ post.title }}</a>
+              <span class="text-gray-500 text-xs block"> — {{ post.created|date:"Y年m月d日 H:i" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500 italic">まだ投稿がありません。</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %} 

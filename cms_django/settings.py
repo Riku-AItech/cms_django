@@ -145,3 +145,6 @@ LOGIN_REDIRECT_URL = '/posts/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_URL = '/accounts/login/'
 
+# django-ckeditor の非推奨バージョン警告を抑制
+SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
+

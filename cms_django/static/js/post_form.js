@@ -12,4 +12,75 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     animate();
   });
+
+  // サムネイル画像の「クリア」チェックボックスのラベルをボタン風に変更
+  const imageFieldWrapper = document.querySelector('.image-field-wrapper');
+  if (imageFieldWrapper) {
+    console.log('Image field wrapper found:', imageFieldWrapper);
+
+    // チェックボックスとそのラベルを含む可能性のある要素を探す
+    // Djangoのウィジェットは label を使わない可能性もあるため、より柔軟に探す
+    const clearCheckbox = imageFieldWrapper.querySelector('input[id$="-clear_id"][type="checkbox"]');
+    let clearLabel = null;
+
+    if (clearCheckbox) {
+        console.log('Clear checkbox found:', clearCheckbox);
+        // ラベルを探す (for属性 or checkboxの次の要素など)
+        clearLabel = imageFieldWrapper.querySelector(`label[for="${clearCheckbox.id}"]`);
+        if (!clearLabel) {
+            console.log('Label with for attribute not found. Trying to find adjacent label or text.');
+        }
+    } else {
+        console.log('Clear checkbox input not found.');
+    }
+
+    if (clearLabel && clearCheckbox) {
+        console.log('Clear label found:', clearLabel);
+
+        // ラベルのテキストを変更
+        clearLabel.textContent = '画像をクリア';
+
+        // ラベルにボタン風スタイルと右寄せクラスを追加
+        clearLabel.classList.add(
+            'inline-flex', // inline-flexに変更して内部要素を中央揃えしやすくする
+            'items-center', // 縦方向中央揃え
+            'bg-red-100', 
+            'hover:bg-red-200', 
+            'text-red-700', 
+            'text-xs', 
+            'font-semibold', 
+            'px-3', 
+            'py-1', 
+            'rounded-full', 
+            'cursor-pointer', 
+            'ml-4' // 左マージンで右に寄せる (必要なら調整)
+        );
+        clearLabel.style.verticalAlign = 'middle'; // 他の要素との縦位置を調整
+
+        // ★ チェックボックス自体は非表示にする
+        // clearCheckbox.style.display = 'none'; 
+        // ↑ チェックボックスも表示したままにする場合はコメントアウト
+
+        // ★ 現在のファイル名リンクを探す
+        const currentFileLink = imageFieldWrapper.querySelector('a');
+
+        if (currentFileLink) {
+            // ★ ラベル（ボタン）をファイル名リンクの直後に移動
+            currentFileLink.parentNode.insertBefore(clearLabel, currentFileLink.nextSibling);
+            // ★ チェックボックスもラベルの隣に移動させておく（非表示だが）
+            clearLabel.parentNode.insertBefore(clearCheckbox, clearLabel.nextSibling);
+            // ★ 元々ラベルがあった場所のテキストノード（デフォルトの「クリア」など）を削除する試み
+            //    (構造によって調整が必要)
+            if (clearCheckbox.nextSibling && clearCheckbox.nextSibling.nodeType === Node.TEXT_NODE) {
+                clearCheckbox.nextSibling.textContent = ''; //テキストを空にする
+            }
+            // 'Currently:' のテキストも非表示にするなど、さらに調整が必要な場合がある
+        } else {
+            console.log('Current file link not found, cannot reposition clear button accurately.');
+        }
+
+        // 必要であれば、他のデフォルト表示要素（Currently: や Change: など）を
+        // 操作または非表示にするコードもここに追加できます。
+    }
+  }
 }); 

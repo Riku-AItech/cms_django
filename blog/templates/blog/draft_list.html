@@ -16,10 +16,12 @@
                  class="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                 続きを書く
               </a>
-              <a href="{% url 'post_delete' draft.pk %}"
-                 class="text-red-600 hover:text-red-800 font-medium transition-colors">
-                削除
-              </a>
+              <form action="{% url 'post_delete' draft.pk %}" method="post" onsubmit="return confirm('本当に削除しますか？')" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="text-red-600 hover:text-red-800 font-medium transition-colors bg-transparent border-none p-0 cursor-pointer">
+                  削除
+                </button>
+              </form>
             </div>
           </li>
         {% empty %}

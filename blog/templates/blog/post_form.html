@@ -22,8 +22,12 @@
 
     {# ── 下書き一覧リンク ── #}
     <div class="text-right mb-4">
-      <a href="{% url 'draft_list' %}" class="text-sm text-gray-600 hover:underline">
-        🗒️ 下書き一覧を見る
+      {# スタイルをボタン風に変更 #}
+      <a href="{% url 'draft_list' %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg shadow-sm transition duration-150 ease-in-out">
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+        </svg>
+        下書き一覧を見る
       </a>
     </div>
 
@@ -59,7 +63,8 @@
 
       <div>
         <label for="id_image" class="block font-semibold text-gray-700 mb-2">サムネイル画像（投稿一覧に表示されます）</label>
-        <div class="bg-white border border-gray-300 rounded-lg px-4 py-2">
+        {# クラスを追加してJSで選択しやすくする #}
+        <div class="image-field-wrapper bg-white border border-gray-300 rounded-lg px-4 py-2">
           {{ form.image }}
         </div>
       </div>
@@ -77,7 +82,13 @@
     </form>
 
     <div class="mt-6 text-center">
-      <a href="{% url 'post_list' %}" class="text-blue-500 hover:underline">← 投稿一覧に戻る</a>
+      {# 戻るリンクをボタン風に修正 #}
+      <a href="{% url 'post_list' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold rounded-lg shadow-sm transition duration-300">
+        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+        投稿一覧に戻る
+      </a>
     </div>
   </div>
 </div>

@@ -21,5 +21,6 @@ urlpatterns = [
     # …など
     # ユーザープロフィール
     path('users/<str:username>/', views.profile, name='profile'),
+    path('users/<str:username>/readonly/', views.profile_readonly, name='profile_readonly'),
     path('accounts/profile/edit/', views.profile_edit, name='profile_edit'),
 ]

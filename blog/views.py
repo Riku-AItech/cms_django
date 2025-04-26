@@ -146,10 +146,22 @@ def profile(request, username):
     # ユーザーのプロフィールページ
     user_obj = get_object_or_404(User, username=username)
     posts = Post.objects.filter(author=user_obj, published=True).order_by('-created')
-    profile = getattr(user_obj, 'profile', None)
+    profile_instance = Profile.objects.get_or_create(user=user_obj)[0]
     return render(request, 'blog/profile.html', {
         'profile_user': user_obj,
-        'profile': profile,
+        'profile': profile_instance,
+        'posts': posts,
+    })
+
+# 追加: 閲覧専用プロフィールビュー
+@login_required
+def profile_readonly(request, username):
+    user_obj = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=user_obj, published=True).order_by('-created')
+    profile_instance = Profile.objects.get_or_create(user=user_obj)[0]
+    return render(request, 'blog/profile_readonly.html', {
+        'profile_user': user_obj,
+        'profile': profile_instance,
         'posts': posts,
     })
 

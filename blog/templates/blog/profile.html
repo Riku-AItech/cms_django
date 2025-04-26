@@ -17,13 +17,23 @@
         <p class="text-gray-600 mt-2">{{ profile.bio|default:'自己紹介はまだ設定されていません。' }}</p>
       </div>
     </div>
+    {# ログインユーザー自身のプロフィールの時だけ編集ボタンを表示 #}
     {% if user == profile_user %}
       <div class="mt-4 text-right">
-        <a href="{% url 'profile_edit' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
-          プロフィールを編集
-        </a>
-        <div class="mt-2">
-          <a href="{% url 'post_list' %}" class="text-blue-500 hover:underline">← 投稿一覧画面に戻る</a>
+        {# 各ボタンをdivで囲んで縦並びにする #}
+        <div>
+          <a href="{% url 'profile_edit' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition mb-2">
+            プロフィールを編集
+          </a>
+        </div>
+        <div>
+          {# 投稿一覧に戻るボタンを修正 #}
+          <a href="{% url 'post_list' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold rounded-lg shadow-sm transition duration-300">
+            <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+            投稿一覧に戻る
+          </a>
         </div>
       </div>
     {% endif %}

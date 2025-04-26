@@ -60,7 +60,6 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for post in posts %}
     <article class="post-card bg-white rounded-lg border border-gray-100 shadow hover:shadow-md transition overflow-hidden flex flex-col">
-
       {% if post.image %}
       <a href="{% url 'post_detail' post.pk %}" class="block">
         <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-40 object-cover">
@@ -72,7 +71,17 @@
             <a href="{% url 'post_detail' post.pk %}" class="hover:text-blue-600 transition">{{ post.title }}</a>
           </h2>
           <div class="flex items-center gap-2 text-xs text-gray-500">
-            <span><a href="{% url 'profile' post.author.username %}" class="text-blue-600 hover:underline">{{ post.author.username }}</a></span>
+            {# 投稿者名にアイコンを追加してリンクを分かりやすく #}
+            <span class="inline-flex items-center gap-1">
+              {# ボタン風スタイルを適用 #}
+              <a href="{% url 'profile_readonly' post.author.username %}" 
+                 class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 hover:bg-gray-200 rounded-full text-blue-700 hover:text-blue-800 transition duration-150 ease-in-out">
+                <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs font-medium">{{ post.author.username }}</span>
+              </a>
+            </span>
             <span>•</span>
             <time>{{ post.created|date:"Y年m月d日" }}</time>
           </div>
@@ -92,7 +101,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
             </svg>
           </a>
-          <form action="{% url 'post_delete' post.pk %}" method="post" onsubmit="return confirm('本当に削除しますか？')">
+          {# 削除確認画面へのリンクに変更 #}
+          {# 元のフォーム形式に戻す (ブラウザ確認ダイアログ使用) #}
+          <form action="{% url 'post_delete' post.pk %}" method="post" onsubmit="return confirm('本当に削除しますか？')" class="inline">
             {% csrf_token %}
             <button type="submit" class="hover:text-red-600" title="削除">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
