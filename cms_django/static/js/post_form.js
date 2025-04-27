@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
         clearLabel = imageFieldWrapper.querySelector(`label[for="${clearCheckbox.id}"]`);
         if (!clearLabel) {
             console.log('Label with for attribute not found. Trying to find adjacent label or text.');
+            // for属性がない場合、checkboxの次の要素がラベルテキストを含む可能性がある
+            // または、特定のクラスが付与されている場合など、Djangoの出力次第
         }
     } else {
         console.log('Clear checkbox input not found.');
@@ -38,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Clear label found:', clearLabel);
 
         // ラベルのテキストを変更
-        clearLabel.textContent = '画像をクリア';
+        clearLabel.textContent = '現在の画像をクリア';
 
         // ラベルにボタン風スタイルと右寄せクラスを追加
         clearLabel.classList.add(
@@ -50,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'text-xs', 
             'font-semibold', 
             'px-3', 
-            'py-1', 
+            'py-1', // パディング調整
             'rounded-full', 
             'cursor-pointer', 
             'ml-4' // 左マージンで右に寄せる (必要なら調整)
@@ -58,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearLabel.style.verticalAlign = 'middle'; // 他の要素との縦位置を調整
 
         // ★ チェックボックス自体は非表示にする
-        // clearCheckbox.style.display = 'none'; 
-        // ↑ チェックボックスも表示したままにする場合はコメントアウト
+        clearCheckbox.style.display = 'none'; // 非表示にする
 
         // ★ 現在のファイル名リンクを探す
         const currentFileLink = imageFieldWrapper.querySelector('a');
@@ -71,10 +72,19 @@ document.addEventListener('DOMContentLoaded', function() {
             clearLabel.parentNode.insertBefore(clearCheckbox, clearLabel.nextSibling);
             // ★ 元々ラベルがあった場所のテキストノード（デフォルトの「クリア」など）を削除する試み
             //    (構造によって調整が必要)
-            if (clearCheckbox.nextSibling && clearCheckbox.nextSibling.nodeType === Node.TEXT_NODE) {
-                clearCheckbox.nextSibling.textContent = ''; //テキストを空にする
+            if (clearCheckbox.nextSibling && clearCheckbox.nextSibling.nodeType === Node.TEXT_NODE ) {
+                 clearCheckbox.nextSibling.remove();
             }
-            // 'Currently:' のテキストも非表示にするなど、さらに調整が必要な場合がある
+            // 例: 「現在:」や「変更:」のテキストノードを削除 (より頑健な方法が必要な場合あり)
+            Array.from(imageFieldWrapper.childNodes).forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE && (node.textContent.includes('現在:') || node.textContent.includes('変更:'))) {
+                    node.textContent = ''; // または node.remove()
+                }
+            });
+            // <br>タグなども不要なら削除
+             const brTags = imageFieldWrapper.querySelectorAll('br');
+             brTags.forEach(br => br.remove());
+
         } else {
             console.log('Current file link not found, cannot reposition clear button accurately.');
         }
