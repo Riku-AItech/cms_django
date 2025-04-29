@@ -83,7 +83,7 @@ import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('postgresql://bluecms_db_user:G2tcY2RXL59qA93eK6xttIshBbpjhDlN@dpg-d075c1adbo4c73aktqn0-a/bluecms_db')
+        default=os.getenv('postgresql://cms_djanogdb_user:2zbuZhFwy4I9pHSvquPVLA2mfIOcqHwI@dpg-d08b2549c44c73bomu5g-a/cms_djanogdb')
     )
 }
 
