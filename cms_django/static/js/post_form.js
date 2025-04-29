@@ -18,19 +18,20 @@ document.addEventListener('DOMContentLoaded', function() {
   if (imageFieldWrapper) {
     console.log('Image field wrapper found:', imageFieldWrapper);
 
-    // チェックボックスとそのラベルを含む可能性のある要素を探す
-    // Djangoのウィジェットは label を使わない可能性もあるため、より柔軟に探す
-    const clearCheckbox = imageFieldWrapper.querySelector('input[id$="-clear_id"][type="checkbox"]');
+    // Django ClearableFileInput の name 属性でクリア用チェックボックスを探す
+    const clearCheckbox = imageFieldWrapper.querySelector('input[type="checkbox"][name$="-clear"]');
     let clearLabel = null;
 
     if (clearCheckbox) {
         console.log('Clear checkbox found:', clearCheckbox);
-        // ラベルを探す (for属性 or checkboxの次の要素など)
+        // ラベルを探す: 通常は for 属性付き
         clearLabel = imageFieldWrapper.querySelector(`label[for="${clearCheckbox.id}"]`);
+        // フォールバック: チェックボックスの次の要素がラベルの可能性
+        if (!clearLabel && clearCheckbox.nextElementSibling) {
+            clearLabel = clearCheckbox.nextElementSibling;
+        }
         if (!clearLabel) {
-            console.log('Label with for attribute not found. Trying to find adjacent label or text.');
-            // for属性がない場合、checkboxの次の要素がラベルテキストを含む可能性がある
-            // または、特定のクラスが付与されている場合など、Djangoの出力次第
+            console.log('Clear label not found after fallback.');
         }
     } else {
         console.log('Clear checkbox input not found.');

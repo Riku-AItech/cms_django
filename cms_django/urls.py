@@ -33,5 +33,5 @@ urlpatterns = [
     path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
     path('accounts/', include('django.contrib.auth.urls')),  # ← これ追加！
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# DEBUG設定に関わらず、MEDIA_URLでメディアファイルを配信
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
