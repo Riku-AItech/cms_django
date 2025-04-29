@@ -10,7 +10,7 @@
     <form method="post" class="flex justify-between">
       {% csrf_token %}
       <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg">アカウントを削除する</button>
-      <a href="{% url 'profile' profile_user.username %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-4 py-2 rounded-lg">キャンセル</a>
+      <a href="{% url 'profile' user.username %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-4 py-2 rounded-lg">キャンセル</a>
     </form>
   </div>
 </div>
