@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 
 from .models import Post, Category, Profile
 from .forms import PostForm, ProfileForm
@@ -186,3 +187,13 @@ def profile_edit(request):
     return render(request, 'blog/profile_edit.html', {
         'form': form,
     })
+
+# 追加: アカウント削除
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        return redirect('login')  # デフォルトのログインURL名
+    return render(request, 'blog/delete_account_confirm.html')

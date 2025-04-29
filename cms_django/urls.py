@@ -21,7 +21,7 @@ from django.shortcuts import redirect  # ← 追加
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from blog.views import signup_view  # ← サインアップビューをインポート
+from blog.views import signup_view, delete_account  # ← サインアップビューとアカウント削除ビューをインポート
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
@@ -32,6 +32,7 @@ urlpatterns = [
     path('accounts/logout/', LogoutView.as_view(), name='logout'),  # ログイン画面に遷移するよう修正
     path('accounts/signup/', signup_view, name='signup'),  # ✅ サインアップ
     path('accounts/', include('django.contrib.auth.urls')),  # ← これ追加！
+    path('accounts/delete/', delete_account, name='delete_account'),
 ]
 # DEBUG設定に関わらず、MEDIA_URLでメディアファイルを配信
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

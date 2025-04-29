@@ -35,6 +35,13 @@
             投稿一覧に戻る
           </a>
         </div>
+        <div>
+          <form method="get" action="{% url 'delete_account' %}" class="inline">
+            <button class="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
+              アカウントを削除
+            </button>
+          </form>
+        </div>
       </div>
     {% endif %}
     <div class="mt-8">
