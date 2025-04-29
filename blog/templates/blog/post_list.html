@@ -64,8 +64,8 @@
     {% for post in posts %}
     <article class="post-card bg-white rounded-lg border border-gray-100 shadow hover:shadow-md transition overflow-hidden flex flex-col">
       {% if post.image %}
-      <a href="{% url 'post_detail' post.pk %}" class="block flex-shrink-0">
-        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-40 object-cover">
+      <a href="{% url 'post_detail' post.pk %}" class="block flex-shrink-0 bg-gray-100">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-40 object-contain object-center">
       </a>
       {% endif %}
       <div class="p-4 flex-grow flex flex-col">
