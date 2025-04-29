@@ -116,7 +116,8 @@ def post_edit(request, pk):
             else:
                 post.published = True
             post.save()
-            return redirect('post_detail', pk=post.pk)
+            # 編集後は投稿一覧に戻す
+            return redirect('post_list')
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_form.html', {'form': form, 'draft': None})
