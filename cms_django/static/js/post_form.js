@@ -59,8 +59,17 @@ document.addEventListener('DOMContentLoaded', function() {
         );
         clearLabel.style.verticalAlign = 'middle'; // 他の要素との縦位置を調整
 
-        // ★ チェックボックス自体は非表示にする
-        clearCheckbox.style.display = 'none'; // 非表示にする
+        // ★ チェックボックス自体は非表示にするのをやめる
+        // clearCheckbox.style.display = 'none'; // ← この行をコメントアウトまたは削除
+
+        // ★ 代わりに視覚的に隠すスタイルを追加（例）
+        clearCheckbox.style.position = 'absolute';
+        clearCheckbox.style.opacity = '0';
+        clearCheckbox.style.width = '1px'; // 完全に0だとフォーカスできない場合があるため
+        clearCheckbox.style.height = '1px';
+        clearCheckbox.style.overflow = 'hidden';
+        clearCheckbox.style.clip = 'rect(0 0 0 0)'; // 古いブラウザ向け
+        clearCheckbox.style.clipPath = 'inset(50%)'; // モダンブラウザ向け
 
         // ★ 現在のファイル名リンクを探す
         const currentFileLink = imageFieldWrapper.querySelector('a');
