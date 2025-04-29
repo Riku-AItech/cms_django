@@ -82,9 +82,7 @@ import dj_database_url
 import os
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('postgresql://cms_djanogdb_user:2zbuZhFwy4I9pHSvquPVLA2mfIOcqHwI@dpg-d08b2549c44c73bomu5g-a/cms_djanogdb')
-    )
+    'default': dj_database_url.config(default=os.environ.get('postgresql://cms_djanogdb_user:2zbuZhFwy4I9pHSvquPVLA2mfIOcqHwI@dpg-d08b2549c44c73bomu5g-a/cms_djanogdb'))
 }
 
 
@@ -128,6 +126,7 @@ USE_TZ = True
 # URL の先頭に付くパス
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 開発サーバー（runserver）や collectstatic 時に
 # 「staticファイルをどこから集めるか」を指示する
