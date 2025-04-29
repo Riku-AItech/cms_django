@@ -50,7 +50,10 @@
         </button>
       </form>
     </div>
-    <a href="{% url 'post_create' %}" class="ml-auto inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md shadow transition">
+    <a href="{% url 'post_create' %}" class="ml-auto inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold text-base rounded-full shadow-lg transform transition hover:-translate-y-1">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
       新規投稿
     </a>
   </div>
