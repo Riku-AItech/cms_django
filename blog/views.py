@@ -101,7 +101,14 @@ def post_edit(request, pk):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
+            # フォームからモデルインスタンスを取得
             post = form.save(commit=False)
+            # クリアチェックされた場合、既存画像を削除
+            if form.cleaned_data.get('image') is False:
+                # ファイルを削除
+                if post.image:
+                    post.image.delete(save=False)
+                post.image = None
             # 編集時も公開/下書き切り替え可能
             if 'save_as_draft' in request.POST:
                 post.published = False
