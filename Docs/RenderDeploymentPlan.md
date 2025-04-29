@@ -18,6 +18,7 @@
    - `settings.py` で `DATABASES` を環境変数 `DATABASE_URL` から読み込むよう変更
    - `STATIC_ROOT`, `MEDIA_ROOT` の設定を追加
    - WhiteNoise ミドルウェアを組み込み
+   - `STATICFILES_STORAGE` を `'whitenoise.storage.CompressedManifestStaticFilesStorage'` に設定
 3. **静的ファイル収集**
    - `python manage.py collectstatic --noinput` を実行し、`staticfiles/` にまとめる
 4. **レンダリング設定ファイル作成**
@@ -25,7 +26,7 @@
    - `render.yaml` の追加（サービス＆DBプロビジョニング）
 5. **Render ダッシュボード設定**
    - GitHub リポジトリを紐付け、ビルド／スタートコマンドを設定
-   - 自動生成された `DATABASE_URL` を確認
+   - 自動生成された `DATABASE_URL` を確認し環境変数に設定
    - Static Files セクションで `staticfiles` → `/static` を指定
    - （必要なら）Persistent Disk をアタッチし、`MEDIA_ROOT` をマウント
 6. **マイグレーション & 確認**
@@ -65,14 +66,32 @@ flowchart TD
 - **settings.py**:
   ```python
   import dj_database_url
+  # コネクション寿命を設定
   DATABASES = {
-      'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+      'default': dj_database_url.config(conn_max_age=600)
   }
+  # WhiteNoiseミドルウェアを追加
   MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+  # 静的ファイル設定
   STATIC_ROOT = BASE_DIR / 'staticfiles'
+  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+  # メディアファイル設定
   MEDIA_ROOT = BASE_DIR / 'media'
   ```
 - **collectstatic**: 自動ビルドステップに含める
 - **render.yaml**: サービス定義・DB定義を IaC で管理
+- **DATABASE_URL**: Renderダッシュボードで作成したPostgreSQLデータベースの接続情報を環境変数として設定する
+  - データベース作成後、Renderダッシュボードの「Environment」タブで`DATABASE_URL`環境変数を確認
+  - Webサービスの「Environment」タブで同じ`DATABASE_URL`を設定
+
+## 5. トラブルシューティング
+- **データベース接続エラー**: `DATABASE_URL`環境変数が正しく設定されていない場合、以下のエラーが発生します
+  ```
+  WARNING:root:No DATABASE_URL environment variable set, and so no databases setup
+  django.core.exceptions.ImproperlyConfigured: settings.DATABASES is improperly configured.
+  ```
+  - 解決策: Renderダッシュボードで`DATABASE_URL`環境変数を正しく設定し、サービスを再起動する
+- **静的ファイル404エラー**: `STATICFILES_STORAGE`設定が正しくない場合に発生
+  - 解決策: `whitenoise`が正しくインストールされ、設定が正しいことを確認
 
 以上の計画に沿って設定・デプロイを行うことで、ローカル開発環境から Render 本番環境への移行が円滑に進みます。 
