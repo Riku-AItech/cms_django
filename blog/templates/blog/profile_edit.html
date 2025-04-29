@@ -11,6 +11,11 @@
       {% csrf_token %}
       <div>
         <label for="id_profile_image" class="block font-semibold text-gray-700 mb-2">プロフィール画像</label>
+        {% if form.instance.profile_image %}
+        <div class="mb-4">
+          <img src="{{ form.instance.profile_image.url }}" alt="プロフィール画像プレビュー" class="w-24 h-24 rounded-full object-contain object-center bg-white border">
+        </div>
+        {% endif %}
         {{ form.profile_image }}
       </div>
       <div>
