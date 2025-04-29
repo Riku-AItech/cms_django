@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
+from django.contrib import messages
 
 from .models import Post, Category, Profile
 from .forms import PostForm, ProfileForm
@@ -182,6 +183,7 @@ def profile_edit(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            messages.success(request, 'プロフィールを更新しました。')
             return redirect('profile', username=request.user.username)
     else:
         form = ProfileForm(instance=profile)
