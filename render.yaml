@@ -2,7 +2,7 @@ services:
   - type: web
     name: cms-django
     env: python
-    region: singapore
+    region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: |
       python manage.py migrate --noinput && gunicorn cms_django.wsgi:application
