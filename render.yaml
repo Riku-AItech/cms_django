@@ -2,7 +2,7 @@ services:
   - type: web
     name: cms-django
     env: python
-    region: singapore  # または tokyo
+    region: singapore # または tokyo
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn cms_django.wsgi:application
     preDeployCommand: |
