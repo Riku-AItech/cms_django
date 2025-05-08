@@ -11,6 +11,13 @@ class PostForm(forms.ModelForm):
             'content': CKEditorWidget(),
         }
 
+    def clean_content(self):
+        content = self.cleaned_data.get('content', '')
+        # 完全に空または空白文字のみの場合
+        if not content or content.strip() == '':
+            raise forms.ValidationError('内容を入力してください。')
+        return content
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile

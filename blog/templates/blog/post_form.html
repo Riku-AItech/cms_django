@@ -46,6 +46,13 @@
 
       <div>
         <label for="id_content" class="block font-semibold text-gray-700 mb-2">内容</label>
+        {% if form.content.errors %}
+        <div class="text-red-600 text-sm mb-2">
+          {% for error in form.content.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+        {% endif %}
         {# ここでCKEditorが適用されることを想定。JavaScriptでのバリデーション用にid_contentは維持 #}
         {{ form.content }}
       </div>
@@ -88,6 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('postForm');
     // DjangoがCKEditorに割り当てるtextareaのIDは通常 'id_content'
     const contentTextarea = document.getElementById('id_content'); 
+    if (contentTextarea) {
+        contentTextarea.required = true;
+    }
 
     if (!form) {
         console.warn('Post form (#postForm) not found. Validation script will not run.');
@@ -119,23 +129,17 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(event) {
         // "下書き保存"ボタンが押された場合はバリデーションをスキップ
         if (document.activeElement && document.activeElement.name === 'save_as_draft') {
-            return; 
+            return;
         }
-
-        const editorContent = getEditorContent();
-        
+        var editorContent = getEditorContent();
         if (editorContent === '') {
-            event.preventDefault(); 
-
-            if (contentTextarea) {
-                contentTextarea.setCustomValidity('このフィールドを入力してください。');
-                contentTextarea.reportValidity();
-            } else {
-                // contentTextarea が見つからない場合、代替のエラー表示手段を検討
-                alert('内容を入力してください。');
-            }
-            
-        } else if (contentTextarea) {
+            event.preventDefault();
+            // HTML5バリデーションを利用してエラーメッセージを表示
+            contentTextarea.setCustomValidity('このフィールドを入力してください。');
+            contentTextarea.reportValidity();
+            contentTextarea.focus();
+            return false;
+        } else {
             contentTextarea.setCustomValidity('');
         }
     });
@@ -144,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (contentTextarea && getEditorContent() !== '') {
             contentTextarea.setCustomValidity('');
         }
+        const existingError = document.getElementById('contentError');
+        if (existingError) existingError.remove();
     }
 
     // CKEditor のインスタンス準備完了後にイベントリスナーを設定
@@ -161,9 +167,86 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<script>
+if (typeof CKEDITOR !== 'undefined') {
+  // エディタ初期化前の設定
+  CKEDITOR.on('instanceReady', function(ev) {
+    // エディタ内のCSSをより強力に設定
+    ev.editor.addCss(
+      'table{width:100% !important;table-layout:fixed !important;}' + 
+      'th,td{border:1px solid #e5e7eb !important;padding:0.5em 0.75em !important;word-wrap:break-word !important;width:auto !important;}' +
+      'td p {margin:0 !important;}' // 余計な余白を削除
+    );
+    
+    // デフォルトのテーブル作成時の設定を上書き
+    ev.editor.on('dialogShow', function(dialogEvent) {
+      if (dialogEvent.data.getName() === 'tableProperties' || dialogEvent.data.getName() === 'table') {
+        var dialogElement = dialogEvent.data.getElement();
+        var widthInput = dialogElement.findOne('[name="txtWidth"]');
+        var widthTypeSelect = dialogElement.findOne('[name="cmbWidthType"]');
+        
+        if (widthInput && widthTypeSelect) {
+          widthInput.setValue('100');
+          widthTypeSelect.setValue('%');
+        }
+      }
+    });
+  });
+  
+  // テーブル作成時の列数と行数を設定
+  CKEDITOR.on('dialogDefinition', function(ev) {
+    if (ev.data.name === 'table') {
+      var definition = ev.data.definition;
+      var infoTab = definition.getContents('info');
+      
+      // デフォルト値を設定: 3列2行
+      if (infoTab) {
+        infoTab.get('txtCols').default = 3;
+        infoTab.get('txtRows').default = 2;
+      }
+    }
+  });
+  
+  // CKEditorの設定をカスタマイズ
+  CKEDITOR.editorConfig = function(config) {
+    config.extraPlugins = 'tableresize';
+    config.tableTools_sizes = {
+      col: '33.3%', // デフォルト列幅を均等に
+      row: '100%'
+    };
+  };
+}
+</script>
 {% endblock %}
 
 {% block scripts %}
   {# {% static 'js/post_form.js' %} は extra_js に統合されたか、不要であれば削除 #}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* CKEditor編集エリアのテーブルを均等幅＆固定レイアウトに */
+  .cke_editable table {
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  /* セル内テキストを折り返し、罫線を表示 */
+  .cke_editable th,
+  .cke_editable td {
+    border: 1px solid #e5e7eb !important;
+    padding: 0.5em 0.75em !important;
+    word-wrap: break-word !important;
+  }
+  
+  /* CKEditorのエディタ内テーブルツールバー調整 */
+  .cke_editable .cke_table-faked-selection-table td {
+    width: 20% !important;
+  }
+  
+  /* CKEditor 内の表示を改善するためのスタイル補強 */
+  .cke_reset_all iframe {
+    width: 100% !important;
+  }
+</style>
 {% endblock %}
 
