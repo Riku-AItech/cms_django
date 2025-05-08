@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +26,9 @@ SECRET_KEY = "django-insecure-03%vjy*fbf%yh-pdp#*_*r78ty%b$ht6ndzk@m#g1qn6-=5237
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+'cms-django-v0yy.onrender.com', '127.0.0.1', 'localhost'
+]
 
 # Application definition
 
@@ -37,11 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "ckeditor",
     'blog',
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -73,12 +78,13 @@ WSGI_APPLICATION = "cms_django.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+import os
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': dj_database_url.config(default=os.environ.get('postgresql://cms_djanogdb_user:2zbuZhFwy4I9pHSvquPVLA2mfIOcqHwI@dpg-d08b2549c44c73bomu5g-a/cms_djanogdb'))
 }
+
 
 
 # Password validation
@@ -117,11 +123,10 @@ USE_TZ = True
 
 # settings.py
 
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # URL の先頭に付くパス
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 開発サーバー（runserver）や collectstatic 時に
 # 「staticファイルをどこから集めるか」を指示する
@@ -135,11 +140,13 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-import os
-
+# ─── メディアファイル（ユーザーアップロード） ───
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/opt/render/project/src/media/'
 LOGIN_REDIRECT_URL = '/posts/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_URL = '/accounts/login/'
+
+# django-ckeditor の非推奨バージョン警告を抑制
+SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
 

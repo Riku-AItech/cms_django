@@ -1,0 +1,7 @@
+.bg-wave-pattern {
+    background-image: url('/static/img/waves.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+  }
+  

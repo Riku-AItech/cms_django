@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
     path('posts/', views.post_list, name='post_list'),  # URL「/posts/」にアクセスしたらpost_list関数を実行
@@ -15,8 +16,11 @@ urlpatterns = [
     path('', views.home_redirect, name='home'),
      # 投稿関連
     path('posts/', views.post_list, name='post_list'),
-    path('posts/new/', views.post_create, name='post_create'),
+    path('new/', views.post_create, name='post_create'),
+    path('posts/drafts/', views.draft_list, name='draft_list'),
     # …など
-
-
+    # ユーザープロフィール
+    path('users/<str:username>/', views.profile, name='profile'),
+    path('users/<str:username>/readonly/', views.profile_readonly, name='profile_readonly'),
+    path('accounts/profile/edit/', views.profile_edit, name='profile_edit'),
 ]

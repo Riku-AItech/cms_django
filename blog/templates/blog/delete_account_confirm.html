@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}アカウント削除の確認{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-sky-100 to-white py-20 px-4">
+  <div class="relative z-10 max-w-lg w-full bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-10 border border-blue-200">
+    <h2 class="text-3xl font-extrabold text-red-600 mb-6 text-center">
+      <svg class="inline-block w-8 h-8 mr-2 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636L5.636 18.364M5.636 5.636l12.728 12.728"/>
+      </svg>
+      アカウント削除の確認
+    </h2>
+    <p class="mb-8 text-gray-700 text-center">この操作は取り消せません。<br>本当にアカウントを削除しますか？</p>
+    <form method="post" class="flex justify-center space-x-4">
+      {% csrf_token %}
+      <button type="submit" class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        削除する
+      </button>
+      <a href="{% url 'profile' user.username %}" class="flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-6 py-2 rounded-full shadow-sm transition-transform hover:-translate-y-0.5">
+        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+        キャンセル
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: cms-django
+    env: python
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: |
+      python manage.py migrate --noinput && gunicorn cms_django.wsgi:application
+    preDeployCommand: |
+      python manage.py collectstatic --noinput

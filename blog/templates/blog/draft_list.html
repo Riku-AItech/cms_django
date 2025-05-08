@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="min-h-screen bg-gradient-to-b from-blue-200 via-blue-100 to-white p-8">
+    <div class="max-w-3xl mx-auto bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-6">
+      <h1 class="text-3xl font-extrabold text-blue-800 mb-6">下書き一覧</h1>
+      <ul class="space-y-4">
+        {% for draft in drafts %}
+          <li class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center hover:shadow-md hover:bg-gray-50 transition-all draft-item">
+            <div>
+              <strong class="text-lg font-medium text-gray-800">{{ draft.title|default:'（タイトルなし）' }}</strong>
+              <p class="text-gray-500 text-sm mt-1">— {{ draft.created|date:"Y/m/d H:i" }}</p>
+            </div>
+            <div class="ml-auto flex space-x-4">
+              <a href="{% url 'post_create' %}?from_draft={{ draft.pk }}"
+                 class="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                続きを書く
+              </a>
+              <form action="{% url 'post_delete' draft.pk %}" method="post" onsubmit="return confirm('本当に削除しますか？')" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="text-red-600 hover:text-red-800 font-medium transition-colors bg-transparent border-none p-0 cursor-pointer">
+                  削除
+                </button>
+              </form>
+            </div>
+          </li>
+        {% empty %}
+          <li class="text-center text-blue-600 py-4">下書きはありません。</li>
+        {% endfor %}
+      </ul>
+      <div class="mt-6 text-center">
+        <a href="{% url 'post_create' %}" class="inline-flex items-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold py-2 px-4 rounded-lg transition">
+          ← 新規投稿画面に戻る
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {% load static %}
+  <script src="{% static 'js/draft_list.js' %}"></script>
+{% endblock %}
