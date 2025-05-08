@@ -16,13 +16,6 @@
   {{ form.media }}
   <div class="relative z-10 w-full max-w-3xl bg-white/80 shadow-xl backdrop-blur-md rounded-2xl p-10 border border-blue-200">
 
-<<<<<<< HEAD
-    <form method="post" enctype="multipart/form-data" id="postForm">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
-            投稿する
-=======
     <h1 class="text-3xl font-extrabold text-blue-700 mb-10 text-center tracking-wide">
       {% if form.instance.pk %}投稿の編集{% else %}新しい投稿を作成{% endif %}
     </h1>
@@ -38,7 +31,7 @@
       </a>
     </div>
 
-    <form method="post" enctype="multipart/form-data" class="space-y-6">
+    <form method="post" enctype="multipart/form-data" id="postForm" class="space-y-6">
       {% csrf_token %}
 
       <div>
@@ -53,7 +46,8 @@
 
       <div>
         <label for="id_content" class="block font-semibold text-gray-700 mb-2">内容</label>
-        {{ form.content|add_class:"w-full h-44 px-5 py-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none" }}
+        {# ここでCKEditorが適用されることを想定。JavaScriptでのバリデーション用にid_contentは維持 #}
+        {{ form.content }}
       </div>
 
       <div>
@@ -67,7 +61,6 @@
         <button type="submit" name="publish"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5">
           投稿する
->>>>>>> aa508b14d7d057fd3075804042026f4faf9034a2
         </button>
         <button type="submit" name="save_as_draft"
                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
@@ -92,83 +85,84 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('postForm');
-    // Djangoが生成するtextareaのIDは通常 'id_FIELDNAME'
+    // DjangoがCKEditorに割り当てるtextareaのIDは通常 'id_content'
     const contentTextarea = document.getElementById('id_content'); 
 
-    if (!form || !contentTextarea) {
-        console.warn('Post form or content textarea not found. Validation script will not run.');
+    if (!form) {
+        console.warn('Post form (#postForm) not found. Validation script will not run.');
         return;
     }
+    if (!contentTextarea) {
+        console.warn('Content textarea (#id_content) not found. Rich text editor validation might not work as expected.');
+        // contentTextarea がなくてもフォーム送信イベントリスナーは設定するが、
+        // getEditorContent 内でのCKEditor/TinyMCEインスタンスの取得に依存する
+    }
 
-    // リッチテキストエディタ(TinyMCEを想定)の内容を取得する関数
+    // リッチテキストエディタ(CKEditor/TinyMCEを想定)の内容を取得する関数
     function getEditorContent() {
-        if (typeof tinymce !== 'undefined' && tinymce.get('id_content')) {
-            // TinyMCEが初期化されている場合
+        // CKEditor 5 (またはそれ以降) の場合
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances && CKEDITOR.instances.id_content) {
+            return CKEDITOR.instances.id_content.getData().replace(/<[^>]*>/g, '').trim();
+        }
+        // TinyMCE の場合
+        else if (typeof tinymce !== 'undefined' && tinymce.get('id_content')) {
             return tinymce.get('id_content').getContent({ format: 'text' }).trim();
-        } else if (contentTextarea) {
-            // TinyMCEがない、またはまだ初期化されていない場合、textareaの値を直接使用
-            // (リッチエディタがtextareaと同期している場合のみ有効)
+        }
+        // 通常のtextareaの場合 (フォールバック)
+        else if (contentTextarea) {
             return contentTextarea.value.trim();
         }
         return ''; // 不明な場合は空文字
     }
 
     form.addEventListener('submit', function(event) {
+        // "下書き保存"ボタンが押された場合はバリデーションをスキップ
+        if (document.activeElement && document.activeElement.name === 'save_as_draft') {
+            return; 
+        }
+
         const editorContent = getEditorContent();
         
         if (editorContent === '') {
-            event.preventDefault(); // フォームの送信を中止
+            event.preventDefault(); 
 
-            // contentTextarea (非表示の場合もある) に対してバリデーションメッセージを設定
-            contentTextarea.setCustomValidity('このフィールドを入力してください。');
-            // reportValidity() は、対象要素が表示されている場合にポップアップを表示します。
-            // TinyMCEがtextareaを非表示にしている場合、このポップアップが見えない可能性があります。
-            // その場合は、カスタムのエラーメッセージ要素を別途表示するアプローチが必要です。
-            contentTextarea.reportValidity();
+            if (contentTextarea) {
+                contentTextarea.setCustomValidity('このフィールドを入力してください。');
+                contentTextarea.reportValidity();
+            } else {
+                // contentTextarea が見つからない場合、代替のエラー表示手段を検討
+                alert('内容を入力してください。');
+            }
             
-            // 代替: カスタムエラーメッセージ表示 (例)
-            // const errorDiv = document.getElementById('content-client-error'); // 事前にHTMLに <div id="content-client-error"></div> を用意
-            // if (errorDiv) {
-            //     errorDiv.textContent = 'このフィールドを入力してください。';
-            //     errorDiv.style.display = 'block';
-            // }
-            // contentTextarea.focus(); // もし表示されていればフォーカス
-        } else {
-            contentTextarea.setCustomValidity(''); // エラーがない場合はメッセージをクリア
-            // const errorDiv = document.getElementById('content-client-error');
-            // if (errorDiv) {
-            //     errorDiv.style.display = 'none';
-            // }
+        } else if (contentTextarea) {
+            contentTextarea.setCustomValidity('');
         }
     });
 
-    // ユーザーが何か入力し始めたらカスタムエラーをクリアする
     function clearCustomValidityOnInput() {
-        if (getEditorContent() !== '') {
+        if (contentTextarea && getEditorContent() !== '') {
             contentTextarea.setCustomValidity('');
-            // const errorDiv = document.getElementById('content-client-error');
-            // if (errorDiv) {
-            //     errorDiv.style.display = 'none';
-            // }
         }
     }
 
-    if (typeof tinymce !== 'undefined' && tinymce.get('id_content')) {
-        // TinyMCEのイベントリスナー
-        tinymce.get('id_content').on('keyup input change NodeChange', function() {
-            // NodeChangeはエディタ内の構造変更も検知するため、より広範な入力に対応
-            clearCustomValidityOnInput();
-        });
-    } else if (contentTextarea) {
-        // 標準のtextareaの場合 (TinyMCEが読み込まれる前や使わない場合)
+    // CKEditor のインスタンス準備完了後にイベントリスナーを設定
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances && CKEDITOR.instances.id_content) {
+        CKEDITOR.instances.id_content.on('change', clearCustomValidityOnInput);
+        CKEDITOR.instances.id_content.on('key', clearCustomValidityOnInput);
+    }
+    // TinyMCE の場合
+    else if (typeof tinymce !== 'undefined' && tinymce.get('id_content')) {
+        tinymce.get('id_content').on('keyup input change NodeChange', clearCustomValidityOnInput);
+    }
+    // 通常のtextareaの場合
+    else if (contentTextarea) {
         contentTextarea.addEventListener('input', clearCustomValidityOnInput);
     }
 });
 </script>
 {% endblock %}
-{% endblock %}
 
 {% block scripts %}
-  <script src="{% static 'js/post_form.js' %}"></script>
+  {# {% static 'js/post_form.js' %} は extra_js に統合されたか、不要であれば削除 #}
 {% endblock %}
 
