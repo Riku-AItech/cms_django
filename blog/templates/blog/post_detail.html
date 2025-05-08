@@ -25,22 +25,28 @@
 {% endblock %}
 
 {% block content %}
-  <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
-    <h1 class="text-2xl font-bold text-blue-700 mb-4">{{ post.title }}</h1>
-    <div class="prose max-w-none mb-6">
-      {{ post.content|safe }}
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- 左カラム: タイトル・本文・メタ情報・リンク -->
+      <div class="md:col-span-2">
+        <h1 class="text-3xl font-extrabold text-blue-800 mb-4">{{ post.title }}</h1>
+        <div class="prose mb-6">{{ post.content|safe }}</div>
+        <p class="text-sm text-gray-500 mb-6">投稿日時: {{ post.created|date:"Y年n月j日 H:i" }}</p>
+        <a href="{% url 'post_list' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition duration-300">
+          <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+          投稿一覧に戻る
+        </a>
+      </div>
+      <!-- 右カラム: サムネイル -->
+      <div class="flex justify-center items-start">
+        {% if post.image %}
+          <img src="{{ post.image.url }}" alt="{{ post.title }}" class="rounded-lg shadow-md w-full object-cover">
+        {% endif %}
+      </div>
     </div>
-    <p class="text-sm text-gray-500 mb-6">投稿日時: {{ post.created|date:"Y年n月j日 H:i" }}</p>
-    <div class="mt-8 text-center">
-      <a href="{% url 'post_list' %}"
-         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300">
-        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-        </svg>
-        投稿一覧に戻る
-      </a>
-    </div>
-  </div>
+  </section>
 {% endblock %}
 
 {% block scripts %}
