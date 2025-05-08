@@ -25,40 +25,22 @@
 {% endblock %}
 
 {% block content %}
-<<<<<<< HEAD
-<div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+  <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
     <h1 class="text-2xl font-bold text-blue-700 mb-4">{{ post.title }}</h1>
     <div class="prose max-w-none mb-6">
-        {{ post.content|safe }}
-=======
-<section class="detail-section py-12 px-4 bg-gradient-to-br from-blue-200 via-sky-100 to-white min-h-[calc(100vh-10rem)]">
-  <div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8 detail-card">
-    <!-- タイトルとサムネイル -->
-    <div class="flex items-center mb-6 border-b border-blue-200 pb-6 title-thumbnail-area">
-        <h1 class="detail-title text-3xl font-extrabold text-blue-800 mr-4 flex-grow">{{ post.title }}</h1>
-        {% if post.image %}
-        <div class="detail-thumbnail w-40 h-auto flex-shrink-0"> <!-- 幅を調整 (例: w-32, w-48) -->
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="rounded-lg shadow-md w-full h-full object-cover">
-        </div>
-        {% endif %}
->>>>>>> aa508b14d7d057fd3075804042026f4faf9034a2
+      {{ post.content|safe }}
     </div>
-    {# 本文をHTMLレンダリング #}
-    <div class="prose max-w-none mb-6 detail-content">{{ post.content|safe }}</div>
-    
-    <!-- 投稿日と戻るリンク -->
-    <p class="text-sm text-gray-500 mb-6 detail-meta">投稿日時: {{ post.created|date:"Y年n月j日 H:i" }}</p>
-    <div class="mt-8 text-center detail-actions">
-      <a href="{% url 'post_list' %}" 
+    <p class="text-sm text-gray-500 mb-6">投稿日時: {{ post.created|date:"Y年n月j日 H:i" }}</p>
+    <div class="mt-8 text-center">
+      <a href="{% url 'post_list' %}"
          class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300">
-         <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-         </svg>
-         投稿一覧に戻る
+        </svg>
+        投稿一覧に戻る
       </a>
     </div>
   </div>
-</section>
 {% endblock %}
 
 {% block scripts %}
